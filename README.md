@@ -1,109 +1,129 @@
-# NUEIP Auto Clock In/Out Script
+## NUEIP Auto Clock In/Out Script - Setup Instructions
+
+### Step 1: Verify Requirements
+Ensure your system meets these prerequisites:
+- **Python 3.7 or higher** is installed.
+- **Google Chrome** is installed.
+- **ChromeDriver** is installed and matches your Chrome version.
 
 ---
 
-## Overview
-
-This script automates the process of logging into NUEIP and performing clock in/out actions using Selenium. It is intended **only for employees whose company uses NUEIP** for clocking in and out. Optional email notifications can be sent using Gmail or other SMTP servers.
-
----
-
-## Requirements
-
-- Python 3.7+
-- Google Chrome (installed)
-- ChromeDriver
-
----
-
-## Installation
-
-1. Clone or download this repository:
+### Step 2: Install the Script
+1. **Clone or download the repository**:
    ```bash
    git clone https://github.com/yourusername/Auto_Clock_In_Out.git
    ```
-2. Navigate to the project directory:
+2. **Navigate to the project directory**:
    ```bash
    cd Auto_Clock_In_Out
    ```
-3. Install the required packages:
+3. **Install required packages**:
    ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## Configuration
+### Step 3: Configure the Script
+Open `nueip_clock.py` in a text editor and update the following sections:
 
-Edit the `nueip_clock.py` file at the top to update the configuration:
+#### 3.1 Update NUEIP Login Details
+- Set `COMPANY_CODE`, `EMPLOYEE_ID`, and `PASSWORD` to your NUEIP credentials.
 
-- **NUEIP Login Details**: Update `COMPANY_CODE`, `EMPLOYEE_ID`, and `PASSWORD`.
-- **Email Notification Settings**: Set `enable_email_notification` to `True` if you want to receive email notifications, and configure `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `EMAIL_TO`.
-- **Gmail Token**: If using Gmail for notifications, generate an app token as shown in [this video](https://www.youtube.com/watch?v=GsXyF5Zb5UY).
-- **Holidays and Workdays**: Modify the `HOLIDAYS`, `SPECIAL_WORKDAYS`, and `LEAVE_DAYS` lists as needed.
+#### 3.2 Adjust Holidays and Workdays (Optional)
+- Modify `HOLIDAYS`, `SPECIAL_WORKDAYS`, and `LEAVE_DAYS` lists as needed.
 
 ---
 
-## Usage
+### Step 4: Set Up Headless Mode
+- **What is Headless Mode?** Runs Chrome in the background without opening a visible browser window.
+- **Why Use It?** Prevents the browser from popping up during scheduled tasks, making automation seamless.
+- **How to Enable:**
+   1. In `nueip_clock.py`, set `enable_email_notification = True` if you want the app to run in the background.
+   2. In `nueip_clock.py`, set `enable_email_notification = False` if you want to see the app running. 
+- **Test It:** Run the script manually with headless mode to ensure it works without issues.
 
-To run the script manually:
+---
 
-- Clock in:
+### Step 5: Set Up Email Notifications
+- **Why Use It?** Receive confirmations or alerts about clock in/out actions, ensuring the automation is working as expected.
+- **How to Set Up:**
+  1. In `nueip_clock.py`, set `enable_email_notification = True`.
+  2. Update the following:
+     - `SMTP_SERVER`: Your email provider’s SMTP server (e.g., `smtp.gmail.com` for Gmail).
+     - `SMTP_PORT`: Typically `587` for TLS.
+     - `SMTP_USER`: Your email address.
+     - `SMTP_PASS`: Your email password or an app-specific token.
+     - `EMAIL_TO`: The recipient’s email (can be the same as `SMTP_USER`).
+  3. **For Gmail Users:**
+     - Generate an app-specific token (not your regular password). Follow [this video](https://www.youtube.com/watch?v=GsXyF5Zb5UY) for instructions.
+     - Use this app password (token) as `SMTP_PASS`.
+- **Test It:** Run the script manually and check if you receive an email.
+
+---
+
+### Step 6: Test the Script Manually
+- **Clock in**:
   ```bash
   python nueip_clock.py clock_in
   ```
-- Clock out:
+- **Clock out**:
   ```bash
   python nueip_clock.py clock_out
   ```
+- Verify the actions in NUEIP and check for errors in the terminal.
 
 ---
 
-## Automating with Crontab
-
-You can schedule automatic clock in/out using crontab on macOS/Linux:
-
-1. Open the crontab editor:
+### Step 7: Automate with Crontab (macOS/Linux)
+1. **Open crontab editor**:
    ```bash
    crontab -e
    ```
-   - For vi/vim, press `i` to enter insert mode.
-2. Add the following lines (adjust paths and times as needed):
+2. **Add cron jobs**:
+   - **Do Not Forget To  Adjust File Paths and Times**
    ```cron
-   # Clock in every weekday at 08:50 AM
+   # Clock in at 08:50 AM, weekdays
    50 8 * * 1-5 /path/to/python3 /path/to/nueip_clock.py clock_in >> /tmp/clock_in.log 2>&1
 
-   # Clock out every weekday at 18:05 PM
+   # Clock out at 18:05 PM, weekdays
    05 18 * * 1-5 /path/to/python3 /path/to/nueip_clock.py clock_out >> /tmp/clock_out.log 2>&1
    ```
-3. Save and exit the editor (in vim, press `Esc` then type `:wq` and hit Enter).
-4. Check logs:
+4. **Save and exit** (in vim, press `Esc`, type `:wq`, Enter).
+5. **Check logs**:
    ```bash
    cat /tmp/clock_in.log
    cat /tmp/clock_out.log
    ```
-5. List current crontab entries:
-   ```bash
-   crontab -l
-   ```
 
 ---
 
-## Keeping Your Mac Awake (Optional)
-
-To ensure scheduled tasks run without interruption (e.g., if your Mac goes to sleep), you can use the `caffeinate` command.
-
-- **Run in the background:**
+### Step 8: Keep Your Mac Awake (Optional, macOS Only)
+To prevent sleep from interrupting tasks:
+- **Run in background**:
   ```bash
   caffeinate -dimsu &
   ```
-  - To stop: `killall caffeinate`
-- **Run interactively:**
-  - Run `caffeinate` without `&` to keep the terminal busy; press `Ctrl + C` to exit when no longer needed.
+  - Stop with `killall caffeinate`.
+- **Run interactively**:
+  ```bash
+  caffeinate
+  ```
+  - Press `Ctrl + C` to stop.
 
 ---
 
-## Disclaimer and Regional Settings
+### Step 9: Consider Regional Adjustments
+- The script is set for **Taiwan** (holidays, time zones) and **macOS**. Adjust for other regions or OS:
+  - Modify holiday lists.
+  - Use a different scheduler (e.g., Task Scheduler on Windows).
 
-- **Region**: This script’s settings (holidays, time zones, etc.) are tailored for Taiwan on macOS. If you are in a different region or using another operating system, you may need to modify the code and commands accordingly.
-- **Usage**: This tool is designed solely for companies using NUEIP for clock in/out. Use it at your own risk.
+---
+
+### Important Notes
+- This script is **only for companies using NUEIP**.
+- Use at your own risk and ensure compliance with company policies.
+
+---
+
+By following these steps, you’ll have the NUEIP Auto Clock In/Out Script fully configured, with headless mode and email notifications set up as critical components for a smooth automation experience. Let me know if you need further assistance!
