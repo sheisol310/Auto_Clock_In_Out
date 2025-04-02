@@ -83,12 +83,13 @@ Open `nueip_clock.py` in a text editor and update the following sections:
 2. **Add cron jobs**:
    - **Do Not Forget To  Adjust File Paths and Times**
    ```cron
-   # Clock in at 08:50 AM, weekdays
-   50 8 * * 1-5 /path/to/python3 /path/to/nueip_clock.py clock_in >> /tmp/clock_in.log 2>&1
+   # Clock in at a random time between 08:40 AM and 09:00 AM, weekdays
+   40 8 * * 1-5 /bin/bash -c 'sleep $((RANDOM % 1200)) && /path/to/python3 /path/to/nueip_clock.py clock_in >> /tmp/clock_in.log 2>&1'
 
-   # Clock out at 18:05 PM, weekdays
-   05 18 * * 1-5 /path/to/python3 /path/to/nueip_clock.py clock_out >> /tmp/clock_out.log 2>&1
+   # Clock out at a random time between 18:00 PM and 18:20 PM, weekdays
+   05 18 * * 1-5 /bin/bash -c 'sleep $((RANDOM % 1200)) && /path/to/python3 /path/to/nueip_clock.py clock_out >> /tmp/clock_out.log 2>&1'
    ```
+   The `$RANDOM` variable generates a random number, and `% 1200` restricts it to a range of 0 to 1199 seconds (which is up to 20 minutes).
 4. **Save and exit** (in vim, press `Esc`, type `:wq`, Enter).
 5. **Check logs**:
    ```bash
